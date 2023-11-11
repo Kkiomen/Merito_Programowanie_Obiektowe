@@ -1,0 +1,1 @@
+Zadanie wykonał: Jakub Owsianka

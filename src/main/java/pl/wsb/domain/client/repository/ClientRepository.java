@@ -1,7 +1,7 @@
-package pl.wsb.client.repository;
+package pl.wsb.domain.client.repository;
 
 import com.capgemini.programowanie.obiektowe.ClientNotFoundException;
-import pl.wsb.client.Client;
+import pl.wsb.domain.client.Client;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +21,7 @@ public class ClientRepository {
      */
     public String addClient(Client client) {
         String newId = this.generateNextId();
+        client.setId(newId);
         this.db.put(newId, client);
 
         return newId;

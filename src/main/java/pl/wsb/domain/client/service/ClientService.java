@@ -1,9 +1,9 @@
-package pl.wsb.client.service;
+package pl.wsb.domain.client.service;
 
 import com.capgemini.programowanie.obiektowe.Clients;
-import pl.wsb.client.Client;
-import pl.wsb.client.ClientStatus;
-import pl.wsb.client.repository.ClientRepository;
+import pl.wsb.domain.client.Client;
+import pl.wsb.domain.client.ClientStatus;
+import pl.wsb.domain.client.repository.ClientRepository;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -11,8 +11,8 @@ import java.util.Map;
 public class ClientService implements Clients {
     private final ClientRepository clientRepository;
 
-    public ClientService() {
-        this.clientRepository = new ClientRepository();
+    public ClientService(ClientRepository clientRepository) {
+        this.clientRepository = clientRepository;
     }
 
     public String createNewClient(String firstName, String lastName) {
