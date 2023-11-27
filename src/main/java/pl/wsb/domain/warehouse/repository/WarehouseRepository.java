@@ -18,8 +18,4 @@ public class WarehouseRepository {
 
         return warehouse;
     }
-
-    public void setWarehouse(Warehouse warehouse) {
-        this.warehouse = warehouse;
-    }
 }

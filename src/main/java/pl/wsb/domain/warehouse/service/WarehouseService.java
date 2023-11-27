@@ -43,10 +43,10 @@ public class WarehouseService implements Warehouse {
 
     @Override
     public Map<SupportedMetalType, Double> getMetalTypesToMassStoredByClient(String clientId) {
-
+        Client client = this.clientRepository.findClientById(clientId);
         pl.wsb.domain.warehouse.Warehouse warehouse = this.warehouseRepository.getWarehouse();
 
-        Map<SupportedMetalType, Double> clientInventory = warehouse.getInventory().get(clientId);
+        Map<SupportedMetalType, Double> clientInventory = warehouse.getInventory().get(client.getId());
 
         if (clientInventory == null) {
             return new HashMap<>();
@@ -57,9 +57,10 @@ public class WarehouseService implements Warehouse {
 
     @Override
     public double getTotalVolumeOccupiedByClient(String clientId) {
+        Client client = this.clientRepository.findClientById(clientId);
         pl.wsb.domain.warehouse.Warehouse warehouse = this.warehouseRepository.getWarehouse();
 
-        Map<SupportedMetalType, Double> clientInventory = warehouse.getInventory().get(clientId);
+        Map<SupportedMetalType, Double> clientInventory = warehouse.getInventory().get(client.getId());
 
         if (clientInventory == null) {
             return 0.0;
@@ -78,9 +79,10 @@ public class WarehouseService implements Warehouse {
 
     @Override
     public List<SupportedMetalType> getStoredMetalTypesByClient(String clientId) {
+        Client client = this.clientRepository.findClientById(clientId);
         pl.wsb.domain.warehouse.Warehouse warehouse = this.warehouseRepository.getWarehouse();
 
-        Map<SupportedMetalType, Double> clientInventory = warehouse.getInventory().get(clientId);
+        Map<SupportedMetalType, Double> clientInventory = warehouse.getInventory().get(client.getId());
 
         if (clientInventory == null || clientInventory.isEmpty()) {
             return Collections.emptyList();
