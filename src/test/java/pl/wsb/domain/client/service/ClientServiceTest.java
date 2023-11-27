@@ -1,10 +1,13 @@
 package pl.wsb.domain.client.service;
 
+import com.capgemini.programowanie.obiektowe.ClientNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import pl.wsb.domain.client.Client;
 import pl.wsb.domain.client.ClientStatus;
 import pl.wsb.domain.client.repository.ClientRepository;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ClientServiceTest {
 
@@ -102,5 +105,37 @@ class ClientServiceTest {
         clientServiceTest.activatePremiumAccount(thirdClientId);
 
         Assertions.assertEquals(2, clientServiceTest.getNumberOfPremiumClients());
+    }
+
+    @Test
+    void activatePremiumAccountThrowExceptionWhenClientNotExists() {
+        ClientNotFoundException thrown  = assertThrows(
+                ClientNotFoundException.class,
+                () -> clientServiceTest.activatePremiumAccount("999")
+        );
+    }
+
+    @Test
+    void getClientFullNameThrowExceptionWhenClientNotExists() {
+        ClientNotFoundException thrown  = assertThrows(
+                ClientNotFoundException.class,
+                () -> clientServiceTest.getClientFullName("999")
+        );
+    }
+
+    @Test
+    void getClientCreationDateThrowExceptionWhenClientNotExists() {
+        ClientNotFoundException thrown  = assertThrows(
+                ClientNotFoundException.class,
+                () -> clientServiceTest.getClientCreationDate("999")
+        );
+    }
+
+    @Test
+    void isPremiumClientThrowExceptionWhenClientNotExists() {
+        ClientNotFoundException thrown  = assertThrows(
+                ClientNotFoundException.class,
+                () -> clientServiceTest.isPremiumClient("999")
+        );
     }
 }
