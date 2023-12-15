@@ -15,25 +15,32 @@ class ClientServiceTest {
     ClientService clientServiceTest = new ClientService(clientRepositoryTest);
 
     @Test
-    void createNewClient() {
-
+    void testShouldCreateNewClientAndReturnClientId() {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
 
         // Create user with id 1
         Assertions.assertEquals(clientId, "1");
+    }
 
-        // Get correct data
-        Client client = clientRepositoryTest.findClientById(clientId);
-        Assertions.assertEquals(clientId, client.getId());
-        Assertions.assertEquals("Jan", client.getFirstName());
-        Assertions.assertEquals("Kowalski", client.getLastName());
+    @Test
+    void testShouldCreateNewClientAndReturnCorrectName() {
+        String givenClientId = clientServiceTest.createNewClient("Jan", "Kowalski");
 
-        // Correct count client in database
+        Client whenClient = clientRepositoryTest.findClientById(givenClientId);
+
+        Assertions.assertEquals("Jan", whenClient.getFirstName());
+        Assertions.assertEquals("Kowalski", whenClient.getLastName());
+    }
+
+    @Test
+    void testShouldCreateNewClientAndReturnCorrectCountClient() {
+        clientServiceTest.createNewClient("Jan", "Kowalski");
+
         Assertions.assertEquals(1, clientRepositoryTest.count());
     }
 
     @Test
-    void activatePremiumAccount() {
+    void testShouldActivePremiumAccount() {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
         clientServiceTest.activatePremiumAccount(clientId);
 
@@ -43,7 +50,7 @@ class ClientServiceTest {
     }
 
     @Test
-    void notActivatePremiumDifferentAccount() {
+    void testShouldActivePremiumAccountOnlyUsedActivatePremiumAccountMethod() {
         String firstClientId = clientServiceTest.createNewClient("Anna", "Nowak");
         String secondClientId = clientServiceTest.createNewClient("Jan", "Kowalski");
         String thirdClientId = clientServiceTest.createNewClient("Jakub", "Owsianka");
@@ -60,14 +67,14 @@ class ClientServiceTest {
     }
 
     @Test
-    void getClientFullName() {
+    void testShouldReturnClientFullNameWhenUsedGetClientFullNameMethod() {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
         Client client = clientRepositoryTest.findClientById(clientId);
         Assertions.assertEquals(client.getFirstName() + " " + client.getLastName(), clientServiceTest.getClientFullName(clientId));
     }
 
     @Test
-    void getClientCreationDate() {
+    void testShouldReturnClientCreationDateWhenUsedGetClientCreationDate() {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
         Client client = clientRepositoryTest.findClientById(clientId);
 
@@ -76,7 +83,7 @@ class ClientServiceTest {
     }
 
     @Test
-    void isPremiumClient() {
+    void testShouldReturnPremiumStatusWhenUsedMethodIsPremiumClient() {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
         clientServiceTest.activatePremiumAccount(clientId);
 
@@ -86,7 +93,7 @@ class ClientServiceTest {
     }
 
     @Test
-    void getNumberOfClients() {
+    void testShouldReturnCountOfClientWhenUsedMethodGetNumberOfClients() {
         clientServiceTest.createNewClient("Anna", "Nowak");
         clientServiceTest.createNewClient("Jan", "Kowalski");
         clientServiceTest.createNewClient("Jakub", "Owsianka");
@@ -96,7 +103,7 @@ class ClientServiceTest {
     }
 
     @Test
-    void getNumberOfPremiumClients() {
+    void testShouldReturnCountOfPremiumClientWhenUsedMethodGetNumberOfPremiumClients() {
         String firstClientId = clientServiceTest.createNewClient("Anna", "Nowak");
         String secondClientId = clientServiceTest.createNewClient("Jan", "Kowalski");
         String thirdClientId = clientServiceTest.createNewClient("Jakub", "Owsianka");
@@ -108,7 +115,7 @@ class ClientServiceTest {
     }
 
     @Test
-    void activatePremiumAccountThrowExceptionWhenClientNotExists() {
+    void testShouldThrowExceptionWhenClientNotExistsUsedActivatePremiumAccountMethod() {
         ClientNotFoundException thrown  = assertThrows(
                 ClientNotFoundException.class,
                 () -> clientServiceTest.activatePremiumAccount("999")
@@ -116,7 +123,7 @@ class ClientServiceTest {
     }
 
     @Test
-    void getClientFullNameThrowExceptionWhenClientNotExists() {
+    void testShouldThrowExceptionWhenClientNotExistsUsedGetClientFullNameMethod() {
         ClientNotFoundException thrown  = assertThrows(
                 ClientNotFoundException.class,
                 () -> clientServiceTest.getClientFullName("999")
@@ -124,7 +131,7 @@ class ClientServiceTest {
     }
 
     @Test
-    void getClientCreationDateThrowExceptionWhenClientNotExists() {
+    void testShouldThrowExceptionWhenClientNotExistsUsedGetClientCreationDateMethod() {
         ClientNotFoundException thrown  = assertThrows(
                 ClientNotFoundException.class,
                 () -> clientServiceTest.getClientCreationDate("999")
@@ -132,7 +139,7 @@ class ClientServiceTest {
     }
 
     @Test
-    void isPremiumClientThrowExceptionWhenClientNotExists() {
+    void testShouldThrowExceptionWhenClientNotExistsUsedGetIsPremiumClientMethod() {
         ClientNotFoundException thrown  = assertThrows(
                 ClientNotFoundException.class,
                 () -> clientServiceTest.isPremiumClient("999")

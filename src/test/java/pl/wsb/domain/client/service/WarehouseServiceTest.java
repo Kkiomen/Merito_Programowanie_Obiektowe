@@ -22,18 +22,17 @@ public class WarehouseServiceTest {
     WarehouseService warehouseServiceTest = new WarehouseService(warehouseRepositoryTest, clientRepositoryTest);
 
     @Test
-    public void addMetalIngotWithValidData() {
+    public void testShouldAddMetalIngotWithValidData() {
         SupportedMetalType metalType = SupportedMetalType.COPPER;
         double mass = 100.0;
 
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
-        Warehouse warehouse = warehouseRepositoryTest.getWarehouse();
 
         assertDoesNotThrow(() -> warehouseServiceTest.addMetalIngot(clientId, metalType, mass));
     }
 
     @Test
-    public void addMetalIngotWithNotExistClient() {
+    public void testShouldThrowExceptionWhenAddMetalIngotWithNotExistClient() {
         SupportedMetalType metalType = SupportedMetalType.COPPER;
         double mass = 100.0;
 
@@ -43,7 +42,7 @@ public class WarehouseServiceTest {
     }
 
     @Test
-    public void getMetalTypesToMassWithValidClient() {
+    public void testShouldReturnNotNullWhenUsedGetMetalTypesToMassWithValidClient() {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
 
         Map<SupportedMetalType, Double> result = warehouseServiceTest.getMetalTypesToMassStoredByClient(clientId);
@@ -51,7 +50,7 @@ public class WarehouseServiceTest {
     }
 
     @Test
-    public void getTotalVolumeWithValidClient() {
+    public void testShouldReturnZeroTotalVolumeForNewClient() {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
 
         double totalVolume = warehouseServiceTest.getTotalVolumeOccupiedByClient(clientId);
@@ -59,7 +58,7 @@ public class WarehouseServiceTest {
     }
 
     @Test
-    public void addMetalIngotAndVerifyInventory() throws Exception {
+    public void testShouldWarehouseHasCorrectClientIdWhenAddMetalIngot() throws Exception {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
         SupportedMetalType metalType = SupportedMetalType.COPPER;
         double mass = 100.0;
@@ -70,18 +69,46 @@ public class WarehouseServiceTest {
 
         Map<String, Map<SupportedMetalType, Double>> inventory = warehouse.getInventory();
         assertTrue(inventory.containsKey(clientId));
+    }
 
+    @Test
+    public void testShouldReturnCorrectMassWhenAddMetalIngot() throws Exception {
+        String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
+        SupportedMetalType metalType = SupportedMetalType.COPPER;
+        double mass = 100.0;
+
+        Warehouse warehouse = warehouseRepositoryTest.getWarehouse();
+
+        warehouseServiceTest.addMetalIngot(clientId, metalType, mass);
+
+        Map<String, Map<SupportedMetalType, Double>> inventory = warehouse.getInventory();
         Map<SupportedMetalType, Double> clientInventory = inventory.get(clientId);
-        assertTrue(clientInventory.containsKey(metalType));
+
         assertEquals(mass, clientInventory.get(metalType));
     }
 
     @Test
-    public void addMetalIngotAndVerifyQuantities() throws Exception {
+    public void testShouldReturnCorrectMetalTypeWhenAddMetalIngot() throws Exception {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
         SupportedMetalType metalType = SupportedMetalType.COPPER;
-        double firstMass = 100.0;
-        double secondMass = 200.0;
+        double mass = 100.0;
+
+        Warehouse warehouse = warehouseRepositoryTest.getWarehouse();
+
+        warehouseServiceTest.addMetalIngot(clientId, metalType, mass);
+
+        Map<String, Map<SupportedMetalType, Double>> inventory = warehouse.getInventory();
+        Map<SupportedMetalType, Double> clientInventory = inventory.get(clientId);
+
+        assertTrue(clientInventory.containsKey(metalType));
+    }
+
+    @Test
+    public void testShouldReturnCorrectSumMassWhenAddMetalIngot() throws Exception {
+        String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
+        SupportedMetalType metalType = SupportedMetalType.COPPER;
+        double firstMass = 100.1;
+        double secondMass = 199.9;
         double expectedTotalMass = firstMass + secondMass;
 
         Warehouse warehouse = warehouseRepositoryTest.getWarehouse();
@@ -90,15 +117,13 @@ public class WarehouseServiceTest {
         warehouseServiceTest.addMetalIngot(clientId, metalType, secondMass);
 
         Map<String, Map<SupportedMetalType, Double>> inventory = warehouse.getInventory();
-        assertTrue(inventory.containsKey(clientId));
-
         Map<SupportedMetalType, Double> clientInventory = inventory.get(clientId);
-        assertTrue(clientInventory.containsKey(metalType));
+
         assertEquals(expectedTotalMass, clientInventory.get(metalType));
     }
 
     @Test
-    public void getMetalTypesToMassWithExistingClient() {
+    public void testShouldReturnClientInventoryWhenPutThisInventory() {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
         SupportedMetalType metalType = SupportedMetalType.COPPER;
         double mass = 100.0;
@@ -114,7 +139,7 @@ public class WarehouseServiceTest {
     }
 
     @Test
-    public void getMetalTypesToMassWithEmptyInventory() {
+    public void testShouldReturnEmptyInventoryWhenWantInventoryForClientWhichNeverAddInventory() {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
 
         Map<SupportedMetalType, Double> actualInventory = warehouseServiceTest.getMetalTypesToMassStoredByClient(clientId);
@@ -122,7 +147,7 @@ public class WarehouseServiceTest {
     }
 
     @Test
-    public void getMetalTypesToMassAfterAddingMetal() {
+    public void testShouldReturnCorrectMetalTypeClientInventoryWhenAddMetalIngot() {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
         SupportedMetalType metalType = SupportedMetalType.COPPER;
         double mass = 100.0;
@@ -131,13 +156,24 @@ public class WarehouseServiceTest {
 
         Map<SupportedMetalType, Double> inventoryAfterAdding = warehouseServiceTest.getMetalTypesToMassStoredByClient(clientId);
 
-        assertNotNull(inventoryAfterAdding);
         assertTrue(inventoryAfterAdding.containsKey(metalType));
+    }
+
+    @Test
+    public void testShouldReturnCorrectMassClientInventoryWhenAddMetalIngot() {
+        String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
+        SupportedMetalType metalType = SupportedMetalType.COPPER;
+        double mass = 100.0;
+
+        warehouseServiceTest.addMetalIngot(clientId, metalType, mass);
+
+        Map<SupportedMetalType, Double> inventoryAfterAdding = warehouseServiceTest.getMetalTypesToMassStoredByClient(clientId);
+
         assertEquals(mass, inventoryAfterAdding.get(metalType));
     }
 
     @Test
-    public void getTotalVolumeForClientWithMetals() {
+    public void testShouldReturnCorrectTotalVolumeOccupied() {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
         SupportedMetalType metalType1 = SupportedMetalType.COPPER;
         double mass1 = 100.0;
@@ -158,7 +194,7 @@ public class WarehouseServiceTest {
     }
 
     @Test
-    public void getTotalVolumeForClientWithNoMetals() {
+    public void testShouldReturnZeroTotalVolumeOccupiedWhenNotPutInventory() {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
 
         double totalVolume = warehouseServiceTest.getTotalVolumeOccupiedByClient(clientId);
@@ -166,7 +202,24 @@ public class WarehouseServiceTest {
     }
 
     @Test
-    public void getStoredMetalTypesWithMetals() {
+    public void testShouldReturnMetalTypesWhenWantGetStoredMetalTypesByClient() {
+        String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
+        Set<SupportedMetalType> expectedMetalTypes = new HashSet<>(Arrays.asList(SupportedMetalType.COPPER, SupportedMetalType.IRON));
+
+        Map<SupportedMetalType, Double> clientInventory = new HashMap<>();
+        for (SupportedMetalType metalType : expectedMetalTypes) {
+            clientInventory.put(metalType, 100.0);
+        }
+
+        Warehouse warehouse = warehouseRepositoryTest.getWarehouse();
+        warehouse.getInventory().put(clientId, clientInventory);
+
+        List<SupportedMetalType> storedMetalTypes = warehouseServiceTest.getStoredMetalTypesByClient(clientId);
+        assertTrue(storedMetalTypes.containsAll(expectedMetalTypes));
+    }
+
+    @Test
+    public void testShouldReturnCorrectSizeWhenWantGetStoredMetalTypesByClient() {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
         Set<SupportedMetalType> expectedMetalTypes = new HashSet<>(Arrays.asList(SupportedMetalType.COPPER, SupportedMetalType.IRON));
 
@@ -180,11 +233,10 @@ public class WarehouseServiceTest {
 
         List<SupportedMetalType> storedMetalTypes = warehouseServiceTest.getStoredMetalTypesByClient(clientId);
         assertEquals(expectedMetalTypes.size(), storedMetalTypes.size());
-        assertTrue(storedMetalTypes.containsAll(expectedMetalTypes));
     }
 
     @Test
-    public void getStoredMetalTypesWithNoMetals() {
+    public void testShouldReturnEmptyListSupportedMetalTypeWhenNotPutInventory() {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
 
         List<SupportedMetalType> storedMetalTypes = warehouseServiceTest.getStoredMetalTypesByClient(clientId);
@@ -192,7 +244,7 @@ public class WarehouseServiceTest {
     }
 
     @Test
-    public void addMetalIngotThrowsFullWarehouseException() throws Exception {
+    public void testShouldThrowFullWarehouseExceptionWhenTotalVolumeIsGreaterWhenAddMetalIngot() throws Exception {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
         SupportedMetalType metalType = SupportedMetalType.COPPER;
         double massToAdd = 100.0;
@@ -207,7 +259,7 @@ public class WarehouseServiceTest {
     }
 
     @Test
-    public void addMetalIngotThrowsProhibitedMetalTypeException() throws Exception {
+    public void testShouldThrowProhibitedMetalTypeExceptionWhenUnsupportedMetalTypeWasAdded() throws Exception {
         String clientId = clientServiceTest.createNewClient("Jan", "Kowalski");
         SupportedMetalType prohibitedMetalType = null;
         double mass = 100.0;
